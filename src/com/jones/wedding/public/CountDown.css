@@ -1,0 +1,42 @@
+body {
+	background-color: white;
+	color: #bf600f;
+	font-family: Lucida Grande, sans-serif;
+	font-size: small;
+	margin: 0px;
+	height:100%;
+	width:100%;
+}
+
+.transbackround-container
+{
+	height:324px;
+	width:100%;
+	position:absolute;
+	top:50%;
+	left:0;
+}
+
+.transbackround
+{
+	position:relative;
+	top:-162px;
+	height:324px;
+	width:100%;
+	background-image:url("textBackground.png");
+}
+
+.clock
+{
+	z-index:1;
+	position:relative;
+}
+
+.counting-image
+{
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	-khtml-border-radius: 8px;
+	border-radius: 8px;
+	margin:4px;
+}
