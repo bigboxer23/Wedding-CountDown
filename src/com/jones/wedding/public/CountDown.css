@@ -52,6 +52,10 @@ body {
 	top:0;
 	z-index:0;
 	-moz-transition: 1000ms ease-in;
+	-webkit-transition: 1000ms ease-in;
+	-o-transition: 1000ms ease-in;
+	-ms-transition: 1000ms ease-in;
+	transition: 1000ms ease-in;
 }
 
 .counting-image-0
@@ -114,12 +118,6 @@ body {
 .counting-image-11
 {
 	left:650px;
-
-	/*-webkit-transition: opacity 200ms linear;
-	-moz-transition: opacity 1000ms ease-in;
-	-o-transition: opacity 200ms linear;
-	-ms-transition: opacity 200ms linear;
-	transition: opacity 200ms linear;*/
 }
 
 .bottom-background
@@ -137,12 +135,11 @@ body {
 .falling
 {
 	top:350px;
-	/*opacity:0;*/
-	z-index:10;
+	z-index: 10;
 	-moz-transform: scaleY(-1);
-}
-
-.spacer
-{
-	/*margin:18px;*/
+	-o-transform: scaleY(-1);
+	-webkit-transform: scaleY(-1);
+	transform: scaleY(-1);
+	filter: FlipV;
+	-ms-filter: "FlipV";
 }
