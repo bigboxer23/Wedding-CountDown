@@ -6,6 +6,7 @@ body {
 	margin: 0px;
 	height:100%;
 	width:100%;
+	overflow:hidden;
 }
 
 .transbackround-container
@@ -30,6 +31,15 @@ body {
 {
 	z-index:1;
 	position:relative;
+	top:50%;
+	left:50%;
+}
+
+.clockHolder
+{
+	position:relative;
+	top:-44px;
+	left:-391px;
 }
 
 .counting-image
@@ -38,5 +48,101 @@ body {
 	-webkit-border-radius: 8px;
 	-khtml-border-radius: 8px;
 	border-radius: 8px;
-	margin:4px;
+	position:absolute;
+	top:0;
+	z-index:0;
+	-moz-transition: 1000ms ease-in;
+}
+
+.counting-image-0
+{
+	left:0;
+}
+
+.counting-image-1
+{
+	left:74px;
+}
+
+.counting-image-2
+{
+	left:148px;
+}
+
+.counting-image-3
+{
+	left:222px;
+}
+
+.counting-image-4
+{
+	left:244px;
+}
+
+.counting-image-5
+{
+	left:318px;
+}
+
+.counting-image-6
+{
+	left:392px;
+	top:26px;
+}
+
+.counting-image-7
+{
+	left:410px;
+}
+
+.counting-image-8
+{
+	left:484px;
+}
+
+.counting-image-9
+{
+	left:558px;
+	top:26px;
+}
+
+.counting-image-10
+{
+	left:576px;
+}
+
+.counting-image-11
+{
+	left:650px;
+
+	/*-webkit-transition: opacity 200ms linear;
+	-moz-transition: opacity 1000ms ease-in;
+	-o-transition: opacity 200ms linear;
+	-ms-transition: opacity 200ms linear;
+	transition: opacity 200ms linear;*/
+}
+
+.bottom-background
+{
+	background-image:url("bottomBackground.png");
+	background-repeat:repeat-x;
+	position:absolute;
+	width:100%;
+	height:250px;
+	top:150px;
+	left:0;
+	z-index:1000;
+}
+
+.falling
+{
+	top:350px;
+	/*opacity:0;*/
+	z-index:10;
+	-moz-transform: scaleY(-1);
+}
+
+.spacer
+{
+	/*margin:18px;*/
 }

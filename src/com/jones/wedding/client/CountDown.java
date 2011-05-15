@@ -6,8 +6,8 @@ import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
 import com.jones.wedding.client.util.Metrics;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -15,8 +15,6 @@ import java.util.Map;
  */
 public class CountDown implements EntryPoint, Metrics
 {
-	private Label myClock;
-
 	private long myDifference;
 
 	public static final String kWeddingDate = "05-19-2012";
@@ -29,29 +27,31 @@ public class CountDown implements EntryPoint, Metrics
 
 	public static final int kUpdateInterval = 1000;
 
-	private HorizontalPanel mySecondHolder;
+	private FlowPanel myClockHolder;
+
+	private Map<Integer, FallingImage> myImageMap = new HashMap<Integer, FallingImage>();
 
 	public void onModuleLoad()
 	{
 		Date myWeddingDate = DateTimeFormat.getFormat(kDateTimeFormatString).parse(kWeddingDate);
 		myDifference = myWeddingDate.getTime() - System.currentTimeMillis();
-		myClock = new Label();
 		VerticalPanel aHolder = new VerticalPanel();
 		aHolder.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		aHolder.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
-		aHolder.setWidth("100%");
-		aHolder.setHeight("100%");
-		//aHolder.add(myClock);
-		mySecondHolder = new HorizontalPanel();
-		mySecondHolder.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		aHolder.add(mySecondHolder);
+		myClockHolder = new FlowPanel();
+		myClockHolder.addStyleName("clockHolder");
+		aHolder.add(myClockHolder);
 		aHolder.addStyleName("clock");
-		SimplePanel aTransMiddlePanel = new SimplePanel();
+		FlowPanel aTransMiddlePanel = new FlowPanel();
 		SimplePanel aTransMiddle = new SimplePanel();
 		aTransMiddlePanel.add(aTransMiddle);
 		aTransMiddle.add(new Label());
 		aTransMiddle.addStyleName("transbackround");
 		aTransMiddlePanel.addStyleName("transbackround-container");
+		aTransMiddle = new SimplePanel();
+		aTransMiddle.add(new Label());
+		aTransMiddle.addStyleName("bottom-background");
+		aTransMiddlePanel.add(aTransMiddle);
 		RootPanel.get().add(aTransMiddlePanel);
 		RootPanel.get().add(aHolder);
 		updateDate();
@@ -77,34 +77,68 @@ public class CountDown implements EntryPoint, Metrics
 		long aLeftOver2 = aLeftOver % kHour;
 		long aMinutes = aLeftOver2 / kMinute;
 		long aSeconds = ((aLeftOver2) % kMinute) / kSecond;
-		myClock.setText(aDays + " Days " + aHours + " Hours " + aMinutes + " Minutes " + aSeconds + " Seconds");
-
-		mySecondHolder.clear();
 
 		String aString = aDays + "";
-		mySecondHolder.add(getImage((aString.length() != 3 ? "0" : aString.substring(0, 1)) + ".png"));
-		mySecondHolder.add(getImage((aString.length() == 1 ? "0" : (aString.length() == 2 ? aString.substring(0, 1) : aString.substring(1, 2))) + ".png"));
-		mySecondHolder.add(getImage(aString.substring(aString.length() - 1) + ".png"));
+		getImage((aString.length() != 3 ? "0" : aString.substring(0, 1)) + ".png", 0);
+		getImage((aString.length() == 1 ? "0" : (aString.length() == 2 ? aString.substring(0, 1) : aString.substring(1, 2))) + ".png", 1);
+		getImage(aString.substring(aString.length() - 1) + ".png", 2);
 
+		getImage("oneBlankPixel.png", 3);
 		aString = aHours + "";
-		mySecondHolder.add(getImage((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png"));
-		mySecondHolder.add(getImage(aString.substring(aString.length() == 1 ? 0 : 1) + ".png"));
+		getImage((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png", 4);
+		getImage(aString.substring(aString.length() == 1 ? 0 : 1) + ".png", 5);
 
-		mySecondHolder.add(getImage("Colon.png"));
+		getImage("Colon.png", 6);
 		aString = aMinutes + "";
-		mySecondHolder.add(getImage((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png"));
-		mySecondHolder.add(getImage(aString.substring(aString.length() == 1 ? 0 : 1) + ".png"));
+		getImage((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png", 7);
+		getImage(aString.substring(aString.length() == 1 ? 0 : 1) + ".png", 8);
 
-		mySecondHolder.add(getImage("Colon.png"));
+		getImage("Colon.png", 9);
 		aString = aSeconds + "";
-		mySecondHolder.add(getImage((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png"));
-		mySecondHolder.add(getImage(aString.substring(aString.length() == 1 ? 0 : 1) + ".png"));
+		getImage((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png", 10);
+		getImage(aString.substring(aString.length() == 1 ? 0 : 1) + ".png", 11);
 	}
 
-	private Image getImage(String theUrl)
+	private void getImage(String theUrl, int thePosition)
 	{
-		Image anImage = new Image(theUrl);
-		anImage.addStyleName("counting-image");
-		return anImage;
+		FallingImage anImage = new FallingImage(theUrl, thePosition);
+		FallingImage anOldImage = myImageMap.get(thePosition);
+		if(anOldImage != null && anOldImage.getUrl().endsWith(theUrl))
+		{
+			return;
+		}
+		myImageMap.put(thePosition, anImage);
+		myClockHolder.insert(anImage, 0);
+		if(anOldImage != null)
+		{
+			anOldImage.startFall();
+		}
+	}
+
+	private class FallingImage extends Image
+	{
+		private static final int kRemoveDelay = 2000;
+
+		public FallingImage(String theUrl, int thePosition)
+		{
+			super(theUrl);
+			addStyleName("counting-image");
+			addStyleName("counting-image-" + thePosition);
+		}
+
+		/**
+		 * set the css style for falling, sched
+		 */
+		public void startFall()
+		{
+			this.addStyleName("falling");
+			new Timer()
+			{
+				public void run()
+				{
+					FallingImage.this.removeFromParent();
+				}
+			}.schedule(kRemoveDelay);
+		}
 	}
 }
