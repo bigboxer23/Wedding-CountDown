@@ -66,6 +66,9 @@ public class CountDown implements EntryPoint, Metrics
 		aTransMiddle.add(new Label());
 		aTransMiddle.addStyleName("bottom-background");
 		aTransMiddlePanel.add(aTransMiddle);
+		Label aLabel = new Label("Matthew & Maureen are getting married in");
+		aLabel.addStyleName("topText");
+		aHolder.add(aLabel);
 		RootPanel.get().add(aTransMiddlePanel);
 		RootPanel.get().add(aHolder);
 		updateDate();

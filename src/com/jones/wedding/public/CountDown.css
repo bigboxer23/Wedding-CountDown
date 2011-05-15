@@ -143,3 +143,13 @@ body {
 	filter: FlipV;
 	-ms-filter: "FlipV";
 }
+
+.topText
+{
+	font-family: 'Covered By Your Grace', Lucida Grande, sans-serif;
+	font-size:36px;
+	color:#5b9b53;
+	position:relative;
+	top:-130px;
+	left:-317px;
+}
