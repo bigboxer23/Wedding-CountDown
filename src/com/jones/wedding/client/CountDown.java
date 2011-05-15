@@ -11,26 +11,40 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
+ * This GWT module displays a clock of days, hours, minutes, seconds until 5-12-2012.  Makes good use
+ * of CSS3 transitions to animate in modern browsers
  */
 public class CountDown implements EntryPoint, Metrics
 {
+	/**
+	 * The last time we used
+	 */
 	private long myDifference;
 
+	/**
+	 * Constant date to count to
+	 */
 	public static final String kWeddingDate = "05-19-2012";
 
+	/**
+	 * format of the date
+	 */
 	public static final String kDateTimeFormatString = "MM-dd-yyyy";
 
-	public static final String kDateTimeFormatString2 = "MM-dd-yyyy hh:mm:ss";
-
-	public static final DateTimeFormat kDateTimeFormat = DateTimeFormat.getFormat(kDateTimeFormatString2);
-
-	public static final int kUpdateInterval = 1000;
-
+	/**
+	 * Holder on the page of the "clock"
+	 */
 	private FlowPanel myClockHolder;
 
+	/**
+	 * Map of columns to integers on the page, used so we can get the last used for the column
+	 * to check if an update to the URL has occurred.
+	 */
 	private Map<Integer, FallingImage> myImageMap = new HashMap<Integer, FallingImage>();
 
+	/**
+	 * Setup global stuff, attach panels to the DOM and start the countdown timers.
+	 */
 	public void onModuleLoad()
 	{
 		Date myWeddingDate = DateTimeFormat.getFormat(kDateTimeFormatString).parse(kWeddingDate);
@@ -55,6 +69,7 @@ public class CountDown implements EntryPoint, Metrics
 		RootPanel.get().add(aTransMiddlePanel);
 		RootPanel.get().add(aHolder);
 		updateDate();
+		//Start the timer to trigger an update
 		new Timer()
 		{
 			@Override
@@ -62,11 +77,11 @@ public class CountDown implements EntryPoint, Metrics
 			{
 				updateDate();
 			}
-		}.scheduleRepeating(kUpdateInterval);
+		}.scheduleRepeating(kSecond);
 	}
 
 	/**
-	 * 
+	 * Calculate the new times and trigger updates for columns potentially
 	 */
 	private void updateDate()
 	{
@@ -79,34 +94,42 @@ public class CountDown implements EntryPoint, Metrics
 		long aSeconds = ((aLeftOver2) % kMinute) / kSecond;
 
 		String aString = aDays + "";
-		getImage((aString.length() != 3 ? "0" : aString.substring(0, 1)) + ".png", 0);
-		getImage((aString.length() == 1 ? "0" : (aString.length() == 2 ? aString.substring(0, 1) : aString.substring(1, 2))) + ".png", 1);
-		getImage(aString.substring(aString.length() - 1) + ".png", 2);
+		updateImageColumn((aString.length() != 3 ? "0" : aString.substring(0, 1)) + ".png", 0);
+		updateImageColumn((aString.length() == 1 ? "0" : (aString.length() == 2 ? aString.substring(0, 1) : aString.substring(1, 2))) + ".png", 1);
+		updateImageColumn(aString.substring(aString.length() - 1) + ".png", 2);
 
-		getImage("oneBlankPixel.png", 3);
+		updateImageColumn("oneBlankPixel.png", 3);
 		aString = aHours + "";
-		getImage((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png", 4);
-		getImage(aString.substring(aString.length() == 1 ? 0 : 1) + ".png", 5);
+		updateImageColumn((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png", 4);
+		updateImageColumn(aString.substring(aString.length() == 1 ? 0 : 1) + ".png", 5);
 
-		getImage("Colon.png", 6);
+		updateImageColumn("Colon.png", 6);
 		aString = aMinutes + "";
-		getImage((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png", 7);
-		getImage(aString.substring(aString.length() == 1 ? 0 : 1) + ".png", 8);
+		updateImageColumn((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png", 7);
+		updateImageColumn(aString.substring(aString.length() == 1 ? 0 : 1) + ".png", 8);
 
-		getImage("Colon.png", 9);
+		updateImageColumn("Colon.png", 9);
 		aString = aSeconds + "";
-		getImage((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png", 10);
-		getImage(aString.substring(aString.length() == 1 ? 0 : 1) + ".png", 11);
+		updateImageColumn((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png", 10);
+		updateImageColumn(aString.substring(aString.length() == 1 ? 0 : 1) + ".png", 11);
 	}
 
-	private void getImage(String theUrl, int thePosition)
+	/**
+	 * If there is an old image for the index, and the URL is the same, do nothing.
+	 * If the url doesn't match or there isn't an older image, generate a new one and put it
+	 * into the DOM.  If there was an older image, trigger that image's falling state
+	 *
+	 * @param theUrl the image url to use
+	 * @param thePosition the position on the page
+	 */
+	private void updateImageColumn(String theUrl, int thePosition)
 	{
-		FallingImage anImage = new FallingImage(theUrl, thePosition);
 		FallingImage anOldImage = myImageMap.get(thePosition);
 		if(anOldImage != null && anOldImage.getUrl().endsWith(theUrl))
 		{
 			return;
 		}
+		FallingImage anImage = new FallingImage(theUrl, thePosition);
 		myImageMap.put(thePosition, anImage);
 		myClockHolder.insert(anImage, 0);
 		if(anOldImage != null)
@@ -115,8 +138,15 @@ public class CountDown implements EntryPoint, Metrics
 		}
 	}
 
+	/**
+	 * Image with a method that triggers a falling state.  Also removes from the DOM after a set
+	 * amount of time.  Finally adds some base css classes.
+	 */
 	private class FallingImage extends Image
 	{
+		/**
+		 * Delay before removing from the DOM
+		 */
 		private static final int kRemoveDelay = 2000;
 
 		public FallingImage(String theUrl, int thePosition)
@@ -127,7 +157,7 @@ public class CountDown implements EntryPoint, Metrics
 		}
 
 		/**
-		 * set the css style for falling, sched
+		 * set the css style for falling, schedule timer to remove from the DOM
 		 */
 		public void startFall()
 		{
