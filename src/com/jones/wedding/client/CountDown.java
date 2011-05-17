@@ -55,6 +55,9 @@ public class CountDown implements EntryPoint, Metrics
 		myClockHolder = new FlowPanel();
 		myClockHolder.addStyleName("clockHolder");
 		aHolder.add(myClockHolder);
+		Label aDays = new Label("Days");
+		aDays.addStyleName("days");
+		myClockHolder.add(aDays);
 		aHolder.addStyleName("clock");
 		FlowPanel aTransMiddlePanel = new FlowPanel();
 		SimplePanel aTransMiddle = new SimplePanel();

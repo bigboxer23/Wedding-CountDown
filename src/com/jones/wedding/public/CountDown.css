@@ -30,7 +30,7 @@ body {
 .clock
 {
 	z-index:1;
-	position:relative;
+	position:absolute;
 	top:50%;
 	left:50%;
 }
@@ -39,7 +39,7 @@ body {
 {
 	position:relative;
 	top:-44px;
-	left:-391px;
+	left:-425px;
 }
 
 .counting-image
@@ -80,44 +80,44 @@ body {
 
 .counting-image-4
 {
-	left:244px;
+	left:309px;
 }
 
 .counting-image-5
 {
-	left:318px;
+	left:383px;
 }
 
 .counting-image-6
 {
-	left:392px;
+	left:457px;
 	top:26px;
 }
 
 .counting-image-7
 {
-	left:410px;
+	left:475px;
 }
 
 .counting-image-8
 {
-	left:484px;
+	left:549px;
 }
 
 .counting-image-9
 {
-	left:558px;
+	left:623px;
 	top:26px;
 }
 
 .counting-image-10
 {
-	left:576px;
+	left:641px;
 }
 
 .counting-image-11
 {
-	left:650px;
+	left:715px;
 }
 
 .bottom-background
@@ -152,4 +152,15 @@ body {
 	position:relative;
 	top:-130px;
 	left:-317px;
+}
+
+.days
+{
+	font-family: 'Covered By Your Grace', Lucida Grande, sans-serif;
+	font-size:36px;
+	color:#5b9b53;
+	position:absolute;
+	top:15px;
+	left:220px;
+	z-index:10;
 }
