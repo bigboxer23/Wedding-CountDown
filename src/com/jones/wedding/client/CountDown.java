@@ -17,11 +17,6 @@ import java.util.Map;
 public class CountDown implements EntryPoint, Metrics
 {
 	/**
-	 * The last time we used
-	 */
-	private long myDifference;
-
-	/**
 	 * Constant date to count to
 	 */
 	public static final String kWeddingDate = "05-19-2012";
@@ -42,13 +37,14 @@ public class CountDown implements EntryPoint, Metrics
 	 */
 	private Map<Integer, FallingImage> myImageMap = new HashMap<Integer, FallingImage>();
 
+	private long myWeddingTime;
+
 	/**
 	 * Setup global stuff, attach panels to the DOM and start the countdown timers.
 	 */
 	public void onModuleLoad()
 	{
-		Date myWeddingDate = DateTimeFormat.getFormat(kDateTimeFormatString).parse(kWeddingDate);
-		myDifference = myWeddingDate.getTime() - System.currentTimeMillis();
+		myWeddingTime = DateTimeFormat.getFormat(kDateTimeFormatString).parse(kWeddingDate).getTime();
 		VerticalPanel aHolder = new VerticalPanel();
 		aHolder.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
 		aHolder.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
@@ -91,9 +87,9 @@ public class CountDown implements EntryPoint, Metrics
 	 */
 	private void updateDate()
 	{
-		myDifference = myDifference - kSecond;
-		long aDays = myDifference / kDay;
-		long aLeftOver = myDifference % kDay;
+		long aDifference = myWeddingTime - System.currentTimeMillis();
+		long aDays = aDifference / kDay;
+		long aLeftOver = aDifference % kDay;
 		long aHours = aLeftOver / kHour;
 		long aLeftOver2 = aLeftOver % kHour;
 		long aMinutes = aLeftOver2 / kMinute;
