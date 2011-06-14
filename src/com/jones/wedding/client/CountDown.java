@@ -1,17 +1,21 @@
 package com.jones.wedding.client;
 
 import com.google.gwt.core.client.EntryPoint;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.*;
+import com.jones.wedding.client.images.ClockImageBundle;
 import com.jones.wedding.client.util.Metrics;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This GWT module displays a clock of days, hours, minutes, seconds until 5-12-2012.  Makes good use
+ * This GWT module displays a clock of days, hours, minutes, seconds until 5-19-2012.  Makes good use
  * of CSS3 transitions to animate in modern browsers
  */
 public class CountDown implements EntryPoint, Metrics
@@ -39,15 +43,16 @@ public class CountDown implements EntryPoint, Metrics
 
 	private long myWeddingTime;
 
+	private ClockImageBundle myBundle;
+
 	/**
 	 * Setup global stuff, attach panels to the DOM and start the countdown timers.
 	 */
 	public void onModuleLoad()
 	{
+		myBundle = GWT.<ClockImageBundle>create(ClockImageBundle.class);
 		myWeddingTime = DateTimeFormat.getFormat(kDateTimeFormatString).parse(kWeddingDate).getTime();
-		VerticalPanel aHolder = new VerticalPanel();
-		aHolder.setVerticalAlignment(HasVerticalAlignment.ALIGN_MIDDLE);
-		aHolder.setHorizontalAlignment(HasHorizontalAlignment.ALIGN_CENTER);
+		SimplePanel aHolder = new SimplePanel();
 		myClockHolder = new FlowPanel();
 		myClockHolder.addStyleName("clockHolder");
 		aHolder.add(myClockHolder);
@@ -59,17 +64,20 @@ public class CountDown implements EntryPoint, Metrics
 		SimplePanel aTransMiddle = new SimplePanel();
 		aTransMiddlePanel.add(aTransMiddle);
 		aTransMiddle.add(new Label());
-		aTransMiddle.addStyleName("transbackround");
-		aTransMiddlePanel.addStyleName("transbackround-container");
+		aTransMiddle.addStyleName("transbackground");
+		aTransMiddlePanel.addStyleName("transbackground-container");
 		aTransMiddle = new SimplePanel();
 		aTransMiddle.add(new Label());
 		aTransMiddle.addStyleName("bottom-background");
 		aTransMiddlePanel.add(aTransMiddle);
 		Label aLabel = new Label("Matthew & Maureen are getting married in");
 		aLabel.addStyleName("topText");
-		aHolder.add(aLabel);
 		RootPanel.get().add(aTransMiddlePanel);
 		RootPanel.get().add(aHolder);
+		SimplePanel aLabelHolder = new SimplePanel();
+		aLabelHolder.addStyleName("clock");
+		aLabelHolder.add(aLabel);
+		RootPanel.get().add(aLabelHolder);
 		updateDate();
 		//Start the timer to trigger an update
 		new Timer()
@@ -96,24 +104,66 @@ public class CountDown implements EntryPoint, Metrics
 		long aSeconds = ((aLeftOver2) % kMinute) / kSecond;
 
 		String aString = aDays + "";
-		updateImageColumn((aString.length() != 3 ? "0" : aString.substring(0, 1)) + ".png", 0);
-		updateImageColumn((aString.length() == 1 ? "0" : (aString.length() == 2 ? aString.substring(0, 1) : aString.substring(1, 2))) + ".png", 1);
-		updateImageColumn(aString.substring(aString.length() - 1) + ".png", 2);
+		updateImageColumn(getImageResource(aString.length() != 3 ? "0" : aString.substring(0, 1)), 0);
+		updateImageColumn(getImageResource(aString.length() == 1 ? "0" : (aString.length() == 2 ? aString.substring(0, 1) : aString.substring(1, 2))), 1);
+		updateImageColumn(getImageResource(aString.substring(aString.length() - 1)), 2);
 
-		updateImageColumn("oneBlankPixel.png", 3);
+		updateImageColumn(myBundle.oneBlankPixel(), 3);
 		aString = aHours + "";
-		updateImageColumn((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png", 4);
-		updateImageColumn(aString.substring(aString.length() == 1 ? 0 : 1) + ".png", 5);
+		updateImageColumn(getImageResource(aString.length() == 1 ? "0" : aString.substring(0, 1)), 4);
+		updateImageColumn(getImageResource(aString.substring(aString.length() == 1 ? 0 : 1)), 5);
 
-		updateImageColumn("Colon.png", 6);
+		updateImageColumn(myBundle.colon(), 6);
 		aString = aMinutes + "";
-		updateImageColumn((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png", 7);
-		updateImageColumn(aString.substring(aString.length() == 1 ? 0 : 1) + ".png", 8);
+		updateImageColumn(getImageResource(aString.length() == 1 ? "0" : aString.substring(0, 1)), 7);
+		updateImageColumn(getImageResource(aString.substring(aString.length() == 1 ? 0 : 1)), 8);
 
-		updateImageColumn("Colon.png", 9);
+		updateImageColumn(myBundle.colon(), 9);
 		aString = aSeconds + "";
-		updateImageColumn((aString.length() == 1 ? "0" : aString.substring(0, 1)) + ".png", 10);
-		updateImageColumn(aString.substring(aString.length() == 1 ? 0 : 1) + ".png", 11);
+		updateImageColumn(getImageResource(aString.length() == 1 ? "0" : aString.substring(0, 1)), 10);
+		updateImageColumn(getImageResource(aString.substring(aString.length() == 1 ? 0 : 1)), 11);
+	}
+
+	/**
+	 * Translate a string to the proper image resource from our bundle
+	 *
+	 * @param theString the string
+	 * @return imageResource from our bundle, or null if it doesn't match 0-9
+	 */
+	private ImageResource getImageResource(String theString)
+	{
+		if(theString.equals("0"))
+		{
+			return myBundle.image0();
+		} else if(theString.equals("1"))
+		{
+			return myBundle.image1();
+		} else if(theString.equals("2"))
+		{
+			return myBundle.image2();
+		} else if(theString.equals("3"))
+		{
+			return myBundle.image3();
+		} else if(theString.equals("4"))
+		{
+			return myBundle.image4();
+		} else if(theString.equals("5"))
+		{
+			return myBundle.image5();
+		} else if(theString.equals("6"))
+		{
+			return myBundle.image6();
+		} else if(theString.equals("7"))
+		{
+			return myBundle.image7();
+		} else if(theString.equals("8"))
+		{
+			return myBundle.image8();
+		} else if(theString.equals("9"))
+		{
+			return myBundle.image9();
+		}
+		return null;
 	}
 
 	/**
@@ -121,17 +171,17 @@ public class CountDown implements EntryPoint, Metrics
 	 * If the url doesn't match or there isn't an older image, generate a new one and put it
 	 * into the DOM.  If there was an older image, trigger that image's falling state
 	 *
-	 * @param theUrl the image url to use
+	 * @param theResource the image url to use
 	 * @param thePosition the position on the page
 	 */
-	private void updateImageColumn(String theUrl, int thePosition)
+	private void updateImageColumn(ImageResource theResource, int thePosition)
 	{
 		FallingImage anOldImage = myImageMap.get(thePosition);
-		if(anOldImage != null && anOldImage.getUrl().endsWith(theUrl))
+		if(anOldImage != null && anOldImage.getUrl().equals(theResource.getURL()))
 		{
 			return;
 		}
-		FallingImage anImage = new FallingImage(theUrl, thePosition);
+		FallingImage anImage = new FallingImage(theResource, thePosition);
 		myImageMap.put(thePosition, anImage);
 		myClockHolder.insert(anImage, 0);
 		if(anOldImage != null)
@@ -149,11 +199,11 @@ public class CountDown implements EntryPoint, Metrics
 		/**
 		 * Delay before removing from the DOM
 		 */
-		private static final int kRemoveDelay = 2000;
+		private static final int kRemoveDelay = 1250;
 
-		public FallingImage(String theUrl, int thePosition)
+		public FallingImage(ImageResource theResource, int thePosition)
 		{
-			super(theUrl);
+			super(theResource);
 			addStyleName("counting-image");
 			addStyleName("counting-image-" + thePosition);
 		}
@@ -168,7 +218,13 @@ public class CountDown implements EntryPoint, Metrics
 			{
 				public void run()
 				{
-					FallingImage.this.removeFromParent();
+					Scheduler.get().scheduleDeferred(new Command()
+					{
+						public void execute()
+						{
+							FallingImage.this.removeFromParent();
+						}
+					});
 				}
 			}.schedule(kRemoveDelay);
 		}

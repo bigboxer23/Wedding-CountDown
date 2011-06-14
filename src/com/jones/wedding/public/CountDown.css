@@ -9,7 +9,7 @@ body {
 	overflow:hidden;
 }
 
-.transbackround-container
+.transbackground-container
 {
 	height:324px;
 	width:100%;
@@ -18,7 +18,7 @@ body {
 	left:0;
 }
 
-.transbackround
+.transbackground
 {
 	position:relative;
 	top:-162px;
@@ -149,6 +149,7 @@ body {
 	position:relative;
 	top:-130px;
 	left:-317px;
+	white-space: nowrap;
 }
 
 .days
